@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เศรษฐกิจไทยภารกิจน้องช้าง</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#5ec8ff;--ink:#1f2a44;--red:#ff5a5f;--grn:#25c26e;--yel:#ffd23f;--pur:#8b6cff;--org:#ff9f43;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;font-family:'Kanit','Noto Sans Thai',Tahoma,sans-serif;color:var(--ink);background:linear-gradient(#bfeaff,#fff6d6)}
+#app{max-width:780px;margin:0 auto;padding:12px 14px 40px}
+.btn{font:inherit;font-weight:800;font-size:1.1rem;color:#fff;background:var(--grn);border:0;border-radius:14px;padding:12px 22px;margin:8px 4px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.25);min-height:48px}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.25)}.btn:focus-visible{outline:4px solid var(--ink);outline-offset:2px}
+.btn.y{background:var(--yel);color:var(--ink)}.btn.p{background:var(--pur)}.btn.w{background:#fff;color:var(--ink)}.btn.r{background:var(--red)}
+.card{background:#fff;border-radius:20px;box-shadow:0 6px 0 rgba(31,42,68,.15);padding:16px;margin:12px 0}
+.center{text-align:center}h2{margin:.2em 0}
+.hero{font-size:clamp(2.2rem,9vw,3.6rem);font-weight:800;line-height:1.15;color:var(--pur);margin:18px 0 4px}
+.mascot{font-size:5rem;display:inline-block;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.hud{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+.pill{background:#fff;border-radius:99px;padding:6px 14px;font-weight:800;box-shadow:0 3px 0 rgba(31,42,68,.15);font:inherit;font-weight:800;border:0;cursor:pointer}
+.bar{height:14px;background:#e4ecf7;border-radius:9px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:var(--grn);transition:width .4s}
+.nodes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.node{font:inherit;color:var(--ink);background:#fff;border:4px solid var(--c);border-radius:20px;padding:14px 8px;cursor:pointer;box-shadow:0 6px 0 var(--c);text-align:center}
+.node b{display:block;font-size:2.6rem}.node.lock{filter:grayscale(1);opacity:.55;cursor:not-allowed}
+label{display:block;font-weight:600;margin-top:10px}input[type=range]{width:100%;height:32px;accent-color:var(--pur)}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.stat div{background:#eef6ff;border-radius:12px;padding:8px}.stat b{display:block;font-size:1.4rem}
+.zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
+.zone{min-height:90px;border:3px dashed var(--ink);border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;background:#fffdf2}
+.zone small{width:100%;font-weight:800}.zone.pool{background:#eef6ff}
+.tok{touch-action:none;user-select:none;cursor:grab;background:var(--yel);border:2px solid var(--ink);border-radius:10px;padding:6px 10px;font-weight:600;font-size:.95rem}
+.tok.sel{outline:4px solid var(--pur)}.ghost{position:fixed;z-index:99;pointer-events:none;opacity:.85;transform:scale(1.1)}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:1.05rem;font-weight:600;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:12px;margin:8px 0;cursor:pointer}
+.opt:hover{background:#fff6cf}.opt.on{background:var(--yel)}
+.fb{background:#fff7d6;border-radius:14px;padding:12px;margin:10px 0;line-height:1.6}
+.good{color:#0d8a4b;font-weight:800}.bad{color:#d63031;font-weight:800}
+.meter{display:flex;align-items:center;gap:8px;margin:4px 0}.meter span{width:110px;font-weight:600}.meter .bar{flex:1;margin:0}
+@media (prefers-reduced-motion:reduce){.mascot{animation:none}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===== เนื้อหาภารกิจ (แก้ไขข้อความ/เพิ่มภารกิจได้ที่นี่) ===== */
+const MS=[
+{n:'ตลาดน้อยนักคิด',ic:'🏪',c:'#ff9f43',how:'เลื่อนแถบกำหนดราคาและจำนวนสินค้าที่จะทำ แล้วดูผลลัพธ์เปลี่ยนทันที เมื่อพอใจให้กด "เปิดร้าน" มี 3 วัน แต่ละวันลูกค้าไม่เหมือนกัน',goal:'วิเคราะห์ความต้องการของลูกค้า ตั้งราคา และวางแผนการผลิตให้พอดี',
+ refl:{q:'ถ้าตั้งราคาสูงมาก จะเกิดอะไรขึ้นกับการขาย',o:[['ลูกค้าซื้อน้อยลง ขายได้น้อย แม้กำไรต่อชิ้นสูง',10],['ลูกค้าซื้อมากขึ้นเพราะคิดว่าดี',0],['ไม่มีผลต่อจำนวนที่ขาย',0]]}},
+{n:'นักวางแผนการเงิน',ic:'💰',c:'#25c26e',how:'ลากเหรียญ 100 บาททั้ง 10 เหรียญ ไปใส่ในกระปุก 4 ใบ (บนมือถือแตะเหรียญแล้วแตะกระปุกก็ได้) แล้วกด "ตรวจแผน"',goal:'แบ่งรายรับเป็นรายจ่ายจำเป็น ความต้องการ เงินออม และเงินสำรองอย่างสมดุล',
+ refl:{q:'ทำไมจึงควรมีเงินสำรองแยกจากเงินออม',o:[['ไว้รับมือเหตุฉุกเฉินที่ไม่คาดคิด เช่น เจ็บป่วย',10],['เพื่อให้ใช้ซื้อของที่อยากได้ได้เร็วขึ้น',0],['ไม่จำเป็น ใช้เงินออมก็พอ',4]]}},
+{n:'เศรษฐกิจไทยรอบตัว',ic:'🏭',c:'#8b6cff',how:'ลากกิจกรรมแต่ละอย่างไปวางในกลุ่มที่ถูกต้อง ว่าเป็นบทบาทของผู้ผลิต ผู้บริโภค หรือรัฐบาล แล้วกด "ตรวจคำตอบ"',goal:'อธิบายบทบาทของผู้ผลิต ผู้บริโภค และรัฐบาล และความเชื่อมโยงกัน',
+ refl:{q:'ผู้ผลิต ผู้บริโภค และรัฐบาลเชื่อมโยงกันอย่างไร',o:[['ผู้ผลิตขายให้ผู้บริโภค ทั้งสองจ่ายภาษีให้รัฐ รัฐใช้ภาษีจัดบริการสาธารณะ',10],['ทั้งสามกลุ่มทำงานแยกกัน ไม่เกี่ยวข้องกัน',0],['มีเพียงผู้ผลิตที่เกี่ยวกับรัฐบาล',3]]}},
+{n:'ชุมชนพอเพียง',ic:'🌾',c:'#ff5a5f',how:'อ่านปัญหาของชุมชน แล้วเลือกวิธีแก้ปัญหา ดูแถบรายได้ ความสุข และภูมิคุ้มกันของชุมชนที่เปลี่ยนไป',goal:'ตัดสินใจโดยใช้ความพอประมาณ ความมีเหตุผล ภูมิคุ้มกัน และคำนึงถึงส่วนรวม',
+ refl:{q:'ทางเลือกที่ดีที่สุดมักมีลักษณะอย่างไร',o:[['พอประมาณ มีเหตุผล และเตรียมรับความเสี่ยงระยะยาว',10],['ได้เงินเร็วที่สุดแม้เสียหายภายหลัง',0],['ไม่ลงมือทำอะไรเลย',1]]}}];
+const ROUNDS=[{t:'☀️ วันแดดดี ลูกค้าปกติ',m:1},{t:'🌧 ฝนตกหนัก ลูกค้าออกจากบ้านน้อย',m:.6},{t:'🎪 วันงานวัด คนเยอะมาก',m:1.5}];
+const COST=10,dem=(p,m)=>Math.max(0,Math.round((60-1.5*p)*m)); // ต้นทุนต่อชิ้น 10 บาท / สูตรความต้องการซื้อ
+const ITEMS=[['ชาวนาปลูกข้าว','a'],['นักเรียนซื้อขนมที่โรงเรียน','b'],['กรมทางหลวงสร้างถนน','c'],['โรงงานผลิตน้ำดื่ม','a'],['ครอบครัวซื้อข้าวสาร','b'],['รัฐเก็บภาษีเพื่อพัฒนาประเทศ','c'],['ร้านตัดผมให้บริการ','a'],['ผู้โดยสารจ่ายค่ารถเมล์','b'],['โรงพยาบาลรัฐรักษาประชาชน','c'],['เกษตรกรขายผลไม้ที่ตลาด','a']];
+const ZN3={a:'🏭 ผู้ผลิต (ผลิตสินค้า/ให้บริการ)',b:'🛍 ผู้บริโภค (ซื้อและใช้)',c:'🏛 รัฐบาล (เก็บภาษี จัดบริการสาธารณะ)'};
+const SC=[
+{t:'🌵 ภัยแล้งมาเยือน น้ำในหมู่บ้านเหลือน้อย',o:[['ขุดบ่อเก็บน้ำฝนและปลูกพืชทนแล้ง',[5,10,20],10,'พอประมาณและมีภูมิคุ้มกัน เตรียมรับภัยแล้งครั้งต่อไป'],['สูบน้ำบาดาลปลูกข้าวเต็มพื้นที่',[15,-10,-20],3,'ได้ผลผลิตเร็ว แต่น้ำใต้ดินลดลง กระทบทุกคน'],['ปล่อยที่นาว่างรอฝน',[-15,-10,-5],2,'ไม่มีรายได้และไม่เตรียมรับมือ']]},
+{t:'🗑 ขยะในตลาดสดล้นและส่งกลิ่น',o:[['คัดแยกขยะ ทำปุ๋ยหมักจากเศษผัก',[5,10,15],10,'ลดขยะ ได้ปุ๋ยใช้เอง ประหยัดต้นทุน'],['เผาขยะกลางแจ้ง',[0,-15,-10],2,'เกิดควันพิษ กระทบสุขภาพคนในชุมชน'],['จ้างรถขนไปทิ้งไกลทุกวัน',[-10,0,-5],5,'แก้ปัญหาได้ แต่สิ้นเปลืองค่าใช้จ่ายระยะยาว']]},
+{t:'💸 ราคาวัตถุดิบแพงขึ้น ต้นทุนการผลิตสูง',o:[['รวมกลุ่มซื้อวัตถุดิบ และปลูกผักเองบางส่วน',[10,10,15],10,'ช่วยกันลดต้นทุน พึ่งตนเองได้มากขึ้น'],['กู้เงินมาตุนของจำนวนมาก',[-10,-10,-20],2,'เกินความพอประมาณ เสี่ยงเป็นหนี้'],['ขึ้นราคาสินค้าตามต้นทุน',[10,-10,-5],4,'ลูกค้าอาจลดลง และไม่ได้แก้ที่ต้นเหตุ']]}];
+const DL=['รายได้','ความสุข','ภูมิคุ้มกัน'];
+
+/* ===== ระบบบันทึก / เสียง ===== */
+const KEY='thEcoMissions';let P={pts:[0,0,0,0],st:[0,0,0,0]};
+try{P=JSON.parse(localStorage.getItem(KEY))||P}catch(e){}
+const saveP=()=>{try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}};
+let ac=null,mOn=true,mt=null,stp=0;const NT=[330,392,440,392,523,440,392,330,294,349,440,349,392,330,262,294];
+function tone(f,d,t='triangle',v=.07){if(!ac||!mOn)return;try{const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+function startAudio(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){return}clearInterval(mt);if(mOn)mt=setInterval(()=>{tone(NT[stp%16],.25);if(stp%2==0)tone(NT[stp%16]/2,.3,'sine',.05);stp++},230)}
+function toggleSnd(){mOn=!mOn;if(mOn)startAudio();else clearInterval(mt);document.querySelectorAll('.snd').forEach(b=>b.textContent=mOn?'🔊':'🔇')}
+const sfx=k=>({click:[[600,.06]],ok:[[523,.12],[659,.12],[784,.2]],bad:[[220,.2],[165,.3]],win:[[523,.12],[659,.12],[784,.12],[1046,.3]]}[k]||[]).forEach((n,i)=>setTimeout(()=>tone(n[0],n[1],'square',.05),i*110));
+
+/* ===== โครงหน้าจอ ===== */
+const app=document.getElementById('app'),$=id=>document.getElementById(id);let R={},sel=null,cb=null;
+const stars=n=>'★'.repeat(n)+'☆'.repeat(3-n),coins=()=>P.pts.reduce((a,b)=>a+b,0);
+const show=h=>{app.innerHTML=h;window.scrollTo(0,0);sel=null;cb=null};
+const hud=(t='')=>`<div class="hud"><button class="pill" onclick="sfx('click');home()">🏠 เมนู</button><span class="pill">🪙 ${coins()}</span>${t?`<span class="pill">${t}</span>`:''}<span class="sp"></span><button class="pill snd" onclick="toggleSnd()" aria-label="เปิดปิดเสียง">${mOn?'🔊':'🔇'}</button></div>`;
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+function home(){show(`<div class="center"><div class="mascot">🐘</div><div class="hero">เศรษฐกิจไทย<br>ภารกิจน้องช้าง</div><p>ช่วยน้องช้างค้าขาย วางแผนเงิน และสร้างชุมชนพอเพียง สำหรับ ม.1</p>
+<button class="btn" style="font-size:1.5rem" onclick="startAudio();sfx('click');map()">▶ เริ่มเกม</button><br><button class="pill snd" onclick="toggleSnd()">${mOn?'🔊':'🔇'}</button></div>`)}
+function map(){const all=P.st.every(s=>s>0);show(hud('🗺 แผนที่ภารกิจ')+`<div class="card center"><b>ดาวรวม ${P.st.reduce((a,b)=>a+b,0)}/12</b><div class="bar"><i style="width:${P.st.reduce((a,b)=>a+b,0)/12*100}%"></i></div></div>
+<div class="nodes">${MS.map((m,i)=>{const lk=i>0&&!P.st[i-1];return`<button class="node ${lk?'lock':''}" style="--c:${m.c}" ${lk?'disabled':`onclick="sfx('click');intro(${i})"`}><b>${lk?'🔒':m.ic}</b>ภารกิจ ${i+1}<br>${m.n}<br><span style="color:#e6a700">${stars(P.st[i])}</span></button>`}).join('')}</div>
+${all?`<div class="center"><button class="btn p" onclick="summary()">🏆 สรุปผลทั้งเกม</button></div>`:'<p class="center">ผ่านภารกิจ (ได้อย่างน้อย 1 ดาว) เพื่อปลดล็อกภารกิจถัดไป</p>'}`)}
+function intro(i){R={m:i,s:0,step:0};const m=MS[i];show(hud()+`<div class="card center"><div style="font-size:3.5rem">${m.ic}</div><h2>ภารกิจ ${i+1}: ${m.n}</h2><div class="fb"><b>🎯 เป้าหมายการเรียนรู้:</b> ${m.goal}<br><b>🕹 วิธีเล่น:</b> ${m.how}</div><button class="btn" onclick="sfx('click');[m1,m2,m3,m4][${i}](0)">เริ่มภารกิจ</button></div>`)}
+function finish(){sfx('win');const m=MS[R.m],r=m.refl;R.opts=shuf(r.o);show(hud('💭 ทบทวนความคิด')+`<div class="card"><h2>ถามใจตัวเอง</h2><p>${r.q}</p>${R.opts.map((o,k)=>`<button class="opt" onclick="reflect(${k})">${o[0]}</button>`).join('')}</div>`)}
+function reflect(k){const o=R.opts[k],b=o[1];R.s+=b;sfx(b>=10?'ok':'bad');const pct=R.s/40,st=pct>=.85?3:pct>=.6?2:pct>=.35?1:0;
+const old=P.pts[R.m];if(R.s>old){P.pts[R.m]=R.s}if(st>P.st[R.m])P.st[R.m]=st;saveP();
+show(hud('ผลภารกิจ')+`<div class="card center"><div style="font-size:3rem">${st?'🎉':'💪'}</div><h2>${st?'ภารกิจสำเร็จ!':'ลองใหม่อีกครั้งนะ'}</h2><div style="font-size:2rem;color:#e6a700">${stars(st)}</div><p><b>${R.s}/40 คะแนน</b> (ได้เหรียญ 🪙 ${R.s})</p>
+<div class="fb">${b>=10?'<span class="good">เหตุผลของเธอดีมาก</span>':'<span class="bad">เหตุผลยังไม่ดีที่สุด</span> ลองคิดใหม่ว่าตัวเลือกใดเกิดผลดีต่อทุกฝ่ายระยะยาว'}<br>🎓 สิ่งที่ได้เรียนรู้: ${MS[R.m].goal}</div>
+<button class="btn y" onclick="intro(${R.m})">🔁 ลองใหม่</button><button class="btn" onclick="${st&&R.m<3?`intro(${R.m+1})`:'map()'}">${st&&R.m<3?'ภารกิจต่อไป ▶':'🗺 แผนที่'}</button></div>`)}
+function summary(){show(hud('🏆 สรุปผล')+`<div class="card center"><div class="mascot">🐘</div><h2>เก่งมาก! เธอผ่านครบ 4 ภารกิจ</h2><p style="font-size:1.5rem">🪙 ${coins()} เหรียญ • ⭐ ${P.st.reduce((a,b)=>a+b,0)}/12 ดาว</p></div>
+<div class="card">${MS.map((m,i)=>`<p>${m.ic} <b>${m.n}</b> ${stars(P.st[i])} (${P.pts[i]}/40)<br><small>${m.goal}</small></p>`).join('')}</div>
+<div class="center"><button class="btn" onclick="map()">🗺 แผนที่</button><button class="btn r" onclick="if(confirm('ล้างความก้าวหน้าทั้งหมด?')){P={pts:[0,0,0,0],st:[0,0,0,0]};saveP();home()}">ล้างความก้าวหน้า</button></div>`)}
+
+/* ===== ภารกิจ 1: จำลองตลาด (Simulation) ===== */
+function m1(r){const T=ROUNDS[r];show(hud(`วันที่ ${r+1}/3`)+`<div class="card"><h2>${T.t}</h2><p>ต้นทุนทำสินค้า ${COST} บาท/ชิ้น ลองเลื่อนแถบดูผลลัพธ์</p>
+<label>💵 ราคาขาย: <b id="pv"></b> บาท</label><input type="range" id="pr" min="10" max="40" value="20" oninput="u1(${r})">
+<label>📦 จำนวนที่ทำ: <b id="sv"></b> ชิ้น</label><input type="range" id="st" min="0" max="60" value="20" oninput="u1(${r})">
+<div class="stat"><div>ลูกค้าที่อยากซื้อ<b id="dd"></b></div><div>ขายได้<b id="sl"></b></div><div>กำไร (บาท)<b id="pf"></b></div></div>
+<div class="center"><button class="btn" onclick="o1(${r})">🏪 เปิดร้าน</button></div></div><div id="fb"></div>`);u1(r)}
+function c1(r){const p=+$('pr').value,n=+$('st').value,d=dem(p,ROUNDS[r].m),s=Math.min(n,d);return{p,n,d,s,pf:s*p-n*COST}}
+function u1(r){const c=c1(r);$('pv').textContent=c.p;$('sv').textContent=c.n;$('dd').textContent=c.d;$('sl').textContent=c.s;$('pf').textContent=c.pf;$('pf').style.color=c.pf<0?'#d63031':'#0d8a4b'}
+function o1(r){const c=c1(r);let best=1;for(let p=10;p<=40;p++)best=Math.max(best,dem(p,ROUNDS[r].m)*(p-COST));const sc=Math.max(0,Math.min(10,Math.round(10*c.pf/best)));R.s+=sc;sfx(sc>=7?'ok':'bad');
+const L=[];if(c.n>c.d)L.push(`🔻 ทำเกินความต้องการ ขายไม่หมด เหลือ ${c.n-c.d} ชิ้น ต้นทุนจมเปล่า`);else if(c.n<c.d)L.push(`🔻 ทำน้อยไป เสียโอกาสขายให้ลูกค้า ${c.d-c.n} คน`);else L.push('✅ จำนวนสินค้าพอดีกับความต้องการ');
+L.push(c.p>30?'🔻 ราคาสูงมาก ลูกค้าหายไปเยอะ':c.p<15?'🔻 ราคาต่ำ กำไรต่อชิ้นน้อย':'✅ ราคาอยู่ในช่วงที่ลูกค้ายอมจ่าย');
+$('fb').innerHTML=`<div class="card"><h2>ผลวันนี้: ${sc}/10 คะแนน</h2><div class="fb">${L.join('<br>')}<br>💡 ราคาที่ทำกำไรสูงสุดวันนี้ประมาณ ${[...Array(31)].map((_,i)=>i+10).reduce((a,p)=>dem(p,ROUNDS[r].m)*(p-COST)>dem(a,ROUNDS[r].m)*(a-COST)?p:a)} บาท</div><div class="center"><button class="btn" onclick="${r<2?`m1(${r+1})`:'finish()'}">${r<2?'วันต่อไป ▶':'จบภารกิจ ▶'}</button></div></div>`;document.querySelector('.btn').disabled=true;$('fb').scrollIntoView({behavior:'smooth'})}
+
+/* ===== ลากและวาง (ใช้ร่วมกันภารกิจ 2 และ 3) ===== */
+function dnd(){document.querySelectorAll('.tok').forEach(t=>t.onpointerdown=e=>{e.preventDefault();let mv=false;const g=t.cloneNode(true);g.classList.add('ghost');document.body.appendChild(g);
+const f=ev=>{mv=true;g.style.left=ev.clientX-25+'px';g.style.top=ev.clientY-20+'px'};f(e);mv=false;
+const up=ev=>{removeEventListener('pointermove',f);removeEventListener('pointerup',up);g.remove();if(mv){const z=document.elementFromPoint(ev.clientX,ev.clientY);const zz=z&&z.closest('.zone');if(zz)drop(t,zz)}else{sel=sel===t?null:t;document.querySelectorAll('.tok').forEach(x=>x.classList.toggle('sel',x===sel))}};
+addEventListener('pointermove',f);addEventListener('pointerup',up)});
+document.querySelectorAll('.zone').forEach(z=>z.onclick=e=>{if(sel&&!e.target.closest('.tok'))drop(sel,z)})}
+function drop(t,z){z.appendChild(t);t.classList.remove('sel');sel=null;sfx('click');if(cb)cb()}
+const cnt=z=>document.querySelector(`.zone[data-z="${z}"]`).querySelectorAll('.tok').length;
+
+/* ===== ภารกิจ 2: วางแผนการเงิน ===== */
+const JARS={e:'🍚 จำเป็น (อาหาร ค่าเดินทาง)',w:'🎮 อยากได้ (ของเล่น ขนม)',s:'🐷 เงินออม',r:'🛟 เงินสำรอง'};
+function m2(){show(hud()+`<div class="card"><h2>เงิน 1,000 บาทต่อเดือน</h2><p>ลากเหรียญลงกระปุกให้ครบทุกเหรียญ <span id="rm"></span></p><div class="zone pool" data-z="pool">${[...Array(10)].map(()=>'<span class="tok">🪙100</span>').join('')}</div>
+<div class="zones">${Object.keys(JARS).map(k=>`<div class="zone" data-z="${k}"><small>${JARS[k]}</small></div>`).join('')}</div><div class="center"><button class="btn" onclick="o2()">✔ ตรวจแผน</button></div></div><div id="fb"></div>`);cb=()=>{$('rm').textContent='(เหลือ '+cnt('pool')+' เหรียญ)'};cb();dnd()}
+function o2(){if(cnt('pool')){$('rm').textContent='⚠ ยังมีเหรียญเหลือ '+cnt('pool')+' เหรียญ';return}const e=cnt('e'),w=cnt('w'),s=cnt('s'),r=cnt('r');
+const a=e>=4?10:e*2.5,b=s>=2?10:s*5,c=r>=1?5:0,d=w>=1&&w<=3?5:w==0?3:0,sc=Math.round(a+b+c+d);R.s+=sc;sfx(sc>=24?'ok':'bad');
+const L=[e>=4?'✅ รายจ่ายจำเป็นเพียงพอ':'🔻 รายจ่ายจำเป็นน้อยเกินไป อาจไม่พอใช้จริง',s>=2?'✅ ออมอย่างน้อย 200 บาท สร้างนิสัยออมเงิน':'🔻 ออมน้อยไป ควรออมก่อนใช้',r>=1?'✅ มีเงินสำรองรับเหตุฉุกเฉิน':'🔻 ไม่มีเงินสำรอง หากเกิดเหตุไม่คาดคิดจะเดือดร้อน',w>3?'🔻 ใช้กับสิ่งที่อยากได้มากเกินไป เกินความพอประมาณ':w==0?'🔸 ไม่ให้รางวัลตัวเองเลย ก็ตึงเกินไป':'✅ มีเงินสนุกบ้างอย่างพอประมาณ'];
+$('fb').innerHTML=`<div class="card"><h2>ได้ ${sc}/30 คะแนน</h2><div class="fb">${L.join('<br>')}</div><div class="center"><button class="btn y" onclick="m2()">ลองจัดใหม่</button><button class="btn" onclick="finish()">ต่อไป ▶</button></div></div>`;$('fb').scrollIntoView({behavior:'smooth'})}
+
+/* ===== ภารกิจ 3: จัดกลุ่มบทบาททางเศรษฐกิจ ===== */
+function m3(){show(hud()+`<div class="card"><h2>ใครทำหน้าที่อะไร</h2><div class="zone pool" data-z="pool">${shuf(ITEMS.map((x,i)=>i)).map(i=>`<span class="tok" data-i="${i}">${ITEMS[i][0]}</span>`).join('')}</div>
+<div class="zones">${Object.keys(ZN3).map(k=>`<div class="zone" data-z="${k}"><small>${ZN3[k]}</small></div>`).join('')}</div><span id="rm"></span><div class="center"><button class="btn" onclick="o3()">✔ ตรวจคำตอบ</button></div></div><div id="fb"></div>`);dnd()}
+function o3(){if(cnt('pool')){$('rm').textContent='⚠ ยังมีกิจกรรมที่ยังไม่ได้จัดกลุ่ม '+cnt('pool')+' อย่าง';return}let sc=0,L=[];
+Object.keys(ZN3).forEach(k=>document.querySelector(`.zone[data-z="${k}"]`).querySelectorAll('.tok').forEach(t=>{const it=ITEMS[+t.dataset.i],ok=it[1]==k;if(ok)sc+=3;else{t.style.background='#ffb3b3';L.push(`🔻 "${it[0]}" ควรอยู่กลุ่ม ${ZN3[it[1]]}`)}}));
+R.s+=sc;sfx(sc>=24?'ok':'bad');$('fb').innerHTML=`<div class="card"><h2>ได้ ${sc}/30 คะแนน</h2><div class="fb">${L.length?L.join('<br>'):'<span class="good">ถูกทุกข้อ!</span>'}<br>💡 ผู้ผลิตสร้างสินค้า/บริการ ผู้บริโภคซื้อและใช้ รัฐบาลเก็บภาษีและจัดบริการสาธารณะ</div><div class="center"><button class="btn y" onclick="m3()">ลองใหม่</button><button class="btn" onclick="finish()">ต่อไป ▶</button></div></div>`;$('fb').scrollIntoView({behavior:'smooth'})}
+
+/* ===== ภารกิจ 4: ตัดสินใจแก้ปัญหาชุมชน ===== */
+function m4(i){if(!i)R.mt=[50,50,50];const S=SC[i];show(hud(`สถานการณ์ ${i+1}/3`)+`<div class="card">${R.mt.map((v,k)=>`<div class="meter"><span>${DL[k]}</span><div class="bar"><i style="width:${Math.max(0,Math.min(100,v))}%"></i></div></div>`).join('')}</div>
+<div class="card"><h2>${S.t}</h2><p>จะแก้ปัญหาอย่างไร</p>${S.o.map((o,k)=>`<button class="opt" onclick="o4(${i},${k})">${o[0]}</button>`).join('')}</div><div id="fb"></div>`)}
+function o4(i,k){const o=SC[i].o[k];R.s+=o[2];R.mt=R.mt.map((v,j)=>v+o[1][j]);sfx(o[2]>=8?'ok':'bad');document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+$('fb').innerHTML=`<div class="card"><h2>${o[2]>=8?'<span class="good">ตัดสินใจได้ดี</span>':'<span class="bad">มีผลกระทบตามมา</span>'} (${o[2]}/10)</h2><div class="fb">${o[3]}<br>ผลกระทบ: ${DL.map((d,j)=>`${d} ${o[1][j]>0?'+':''}${o[1][j]}`).join(' • ')}</div><div class="center"><button class="btn" onclick="${i<2?`m4(${i+1})`:'finish()'}">${i<2?'สถานการณ์ต่อไป ▶':'จบภารกิจ ▶'}</button></div></div>`;$('fb').scrollIntoView({behavior:'smooth'})}
+home();
+</script>
+</body>
+</html>
